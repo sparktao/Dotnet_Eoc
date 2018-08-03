@@ -36,7 +36,7 @@ namespace Hexagon.IdentityServer
                 //.AddSigningCredential(cert)
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryApiResources(Config.GetApiResources())
-                .AddInMemoryClients(Config.GetClients())
+                .AddInMemoryClients(Config.GetClients(Configuration))
                 .AddCustomUserStore();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

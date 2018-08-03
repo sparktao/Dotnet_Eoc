@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hexagon.IdentityServer", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hexagon.Service", "BuildingBlocks\Hexagon.Service\Hexagon.Service.csproj", "{74930AEE-40DA-4680-90CC-01E0B275782B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnotherWebMvc", "WebApp\AnotherWebMvc\AnotherWebMvc.csproj", "{D1A3DCB2-BB7F-43F9-8635-6B32EA27F0D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{74930AEE-40DA-4680-90CC-01E0B275782B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74930AEE-40DA-4680-90CC-01E0B275782B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74930AEE-40DA-4680-90CC-01E0B275782B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1A3DCB2-BB7F-43F9-8635-6B32EA27F0D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1A3DCB2-BB7F-43F9-8635-6B32EA27F0D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1A3DCB2-BB7F-43F9-8635-6B32EA27F0D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1A3DCB2-BB7F-43F9-8635-6B32EA27F0D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,6 +94,7 @@ Global
 		{F750350A-69EE-49D1-9ECF-BE3671012BF0} = {3E504597-8D06-4DEC-B015-A768FE3514B3}
 		{0247135E-213C-4A24-9F9F-EA5DBE4265F5} = {3DC64016-19F0-4935-B67E-69155FED1737}
 		{74930AEE-40DA-4680-90CC-01E0B275782B} = {3E504597-8D06-4DEC-B015-A768FE3514B3}
+		{D1A3DCB2-BB7F-43F9-8635-6B32EA27F0D8} = {C1A3BD03-14CD-4CF5-9C1B-A27BB2783880}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7954B083-1896-4FF2-AD89-386558639694}

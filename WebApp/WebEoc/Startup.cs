@@ -14,6 +14,9 @@ using WebApplication1.Models;
 using Oracle.ManagedDataAccess.Client;
 using Hexagon.IService;
 using Hexagon.Service;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace WebApplication1
 {
@@ -36,8 +39,57 @@ namespace WebApplication1
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            var guestPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .RequireClaim("scope", "dataEventRecords")
+                .Build();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("dataEventRecordsAdmin", policyAdmin =>
+                {
+                    policyAdmin.RequireClaim("role", "dataEventRecords.admin");
+                });
+                options.AddPolicy("dataEventRecordsUser", policyUser =>
+                {
+                    policyUser.RequireClaim("role", "dataEventRecords.user");
+                });
+
+            });
+            
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = "Cookies";
+                options.DefaultChallengeScheme = "oidc";
+            })
+            .AddCookie("Cookies")
+            .AddOpenIdConnect("oidc", options =>
+            {
+                options.SignInScheme = "Cookies";
+
+                options.Authority = Configuration.GetValue<string>("IdentityUrl");
+                options.RequireHttpsMetadata = false;
+
+                options.ClientId = "resourceownerclient";
+                options.ClientSecret = "dataEventRecordsSecret";
+                options.ResponseType = "code id_token";
+
+                options.SaveTokens = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                
+                
+                options.Scope.Add("dataEventRecords");
+                options.Scope.Add("offline_access");
+            }); 
+
+            services.AddMvc(options =>
+            {
+                //options.Filters.Add(new AuthorizeFilter(guestPolicy));
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
             services.AddSingleton<IConfiguration>(Configuration);
 
             services.AddDbContext<MvcMovieContext>(options =>
@@ -74,6 +126,8 @@ namespace WebApplication1
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
@@ -86,61 +140,6 @@ namespace WebApplication1
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
-            //app.Run(async (context) =>
-            //{
-            //    //Demo: Basic ODP.NET Core application for ASP.NET Core
-            //    // to connect, query, and return results to a web page
-
-            //    //Create a connection to Oracle			
-            //    string conString = "User Id=cad93;Password=cad93;" +
-
-            //    //How to connect to an Oracle DB without SQL*Net configuration file
-            //    //  also known as tnsnames.ora.
-            //    "Data Source=192.168.48.30:1521/cad93;";
-
-            //    //How to connect to an Oracle DB with a DB alias.
-            //    //Uncomment below and comment above.
-            //    //"Data Source=<service name alias>;";
-
-
-            //    using (OracleConnection con = new OracleConnection(conString))
-            //    {
-            //        using (OracleCommand cmd = con.CreateCommand())
-            //        {
-            //            try
-            //            {
-            //                con.Open();
-            //                cmd.BindByName = true;
-
-            //                //Use the command to display employee names from 
-            //                // the EMPLOYEES table
-            //                cmd.CommandText = "select employee_name from organization_employee where organization_id = :id";
-
-            //                // Assign id to the department number 50 
-            //                OracleParameter id = new OracleParameter("id", 800);
-            //                cmd.Parameters.Add(id);
-
-            //                //Execute the command and use DataReader to display the data
-            //                OracleDataReader reader = cmd.ExecuteReader();
-            //                while (reader.Read())
-            //                {
-            //                    await context.Response.WriteAsync("Employee First Name: " + reader.GetString(0) + "\n");
-            //                }
-
-            //                reader.Dispose();
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                await context.Response.WriteAsync(ex.Message);
-            //            }
-            //        }
-            //    }
-
-            //});
-
-
-
 
         }
     }

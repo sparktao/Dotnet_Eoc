@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using Hexagon.Entity;
 using Hexagon.IService;
 using Hexagon.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace WebApplication1.Areas.CommonModule.Controllers
 {
     [Area("CommonModule")]
+    [Authorize]
     public class HomeController : Controller
     {
         private IConfiguration _configuration;

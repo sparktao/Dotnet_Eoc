@@ -7,6 +7,7 @@ using System.Collections.Generic;
 namespace Hexagon.IdentityServer
 {
     using IdentityServer4;
+    using Microsoft.Extensions.Configuration;
     using System.Security.Claims;
 
     public class Config
@@ -36,7 +37,7 @@ namespace Hexagon.IdentityServer
                     {
                         new Scope
                         {
-                            Name = "dataeventrecordsscope",
+                            Name = "dataeventrecordsscope1",
                             DisplayName = "Scope for the dataEventRecords ApiResource"
                         }
                     },
@@ -46,15 +47,40 @@ namespace Hexagon.IdentityServer
         }
 
         // clients want to access resources (aka scopes)
-        public static IEnumerable<Client> GetClients()
+        public static IEnumerable<Client> GetClients(IConfiguration configuration)
         {
             return new List<Client>
             {
                 new Client
                 {
-                    ClientId = "resourceownerclient",
+                    ClientId = "anotherWebMvc",
+                    ClientName = "MVC Client",
+                    AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
 
-                    AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
+                    ClientSecrets =
+                    {
+                        new Secret("dataEventRecordsSecret".Sha256())
+                    },
+
+                    RedirectUris = { "http://localhost:5002/signin-oidc" },
+                    PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.OfflineAccess,
+                        "dataEventRecords"
+                    },
+                    AllowOfflineAccess = true
+                },
+                new Client
+                {
+                    ClientId = "resourceownerclient",
+                    ClientName = "WebEoc",
+
+                    AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
                     AccessTokenType = AccessTokenType.Jwt,
                     AccessTokenLifetime = 3600,
                     IdentityTokenLifetime = 3600,
@@ -66,6 +92,10 @@ namespace Hexagon.IdentityServer
                     AlwaysSendClientClaims = true,
                     Enabled = true,
                     ClientSecrets=  new List<Secret> { new Secret("dataEventRecordsSecret".Sha256()) },
+
+                    RedirectUris = { string.Format("{0}/signin-oidc", configuration.GetValue<string>("WebEoc")) },
+                    PostLogoutRedirectUris = { string.Format("{0}/signout-callback-oidc", configuration.GetValue<string>("WebEoc")) },
+
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId, 
                         IdentityServerConstants.StandardScopes.Profile,
