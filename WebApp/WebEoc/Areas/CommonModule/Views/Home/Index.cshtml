@@ -6,4 +6,30 @@
 
 <h2>CommonModule Home/Index  @ViewData["UserName"]</h2>
 <p> Employee List has count : @ViewData["employee_list"]</p>
+<p><span id="span1"></span></p>
 
+@section Scripts{
+    <script>
+
+
+        function doWork(options) {
+            return $.ajax("/CommonModule/Home/GetItemById/8000032", {
+                contentType: 'text/json',
+                async: true,
+                success: function (result) {
+                    //alert(result);
+                    $("#span1").html(JSON.stringify(result));
+
+                },
+                error: function (jqXHR, textStatus, error) {
+                    options.callback.apply(options.scope, [error, textStatus, jqXHR]);
+                }
+            });
+        }
+
+        $(function () {
+            doWork();
+        });
+
+    </script>
+}

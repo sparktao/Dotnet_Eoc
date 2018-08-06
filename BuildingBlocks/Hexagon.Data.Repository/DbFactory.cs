@@ -23,6 +23,13 @@ namespace Hexagon.Data.Repository
             DbHelper.DbType = DbType;
             return new Database(connString);
         }
+
+        public static IDatabaseAsync BaseAsyn(string connString, DatabaseType DbType)
+        {
+            DbHelper.DbType = DbType;
+            return new DatabaseAsync(connString);
+        }
+
         /// <summary>
         /// 连接基础库
         /// </summary>

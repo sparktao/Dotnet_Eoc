@@ -2,13 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Hexagon.IService
 {
     public interface IOrgEmployee
     {
 
-        List<Organization_Employee> GetEmployeeList();
+        Task<List<Organization_Employee>> GetEmployeeList();
+
+        Task<Organization_Employee> GetEmployeeById(int id);
 
     }
 }

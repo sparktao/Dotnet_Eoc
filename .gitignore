@@ -1,3 +1,4 @@
 bin
 obj
 .vs
+/WebApp/AnotherWebMvc/AnotherWebMvc.csproj.user

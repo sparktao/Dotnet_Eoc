@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace Hexagon.Service
 {
@@ -20,7 +21,12 @@ namespace Hexagon.Service
             }
         }
 
-        public List<Organization_Employee> GetEmployeeList()
+        public async Task<Organization_Employee> GetEmployeeById(int id)
+        {
+            return await BaseRepositoryAsyn(conString).FindEntityById(id);
+        }
+
+        public async Task<List<Organization_Employee>> GetEmployeeList()
         {
             string sql = "select * from Organization_Employee";
             //string conString = "User Id=cad93;Password=cad93;" +
@@ -28,7 +34,7 @@ namespace Hexagon.Service
             //    //How to connect to an Oracle DB without SQL*Net configuration file
             //    //  also known as tnsnames.ora.
             //    "Data Source=192.168.48.30:1521/cad93;";
-            return BaseRepository(conString).FindList(sql).ToList();
+            return await BaseRepositoryAsyn(conString).FindListBySql(sql);
         }
     }
 }

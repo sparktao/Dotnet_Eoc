@@ -399,7 +399,6 @@ namespace Hexagon.Data.DataAccess
             }
             catch (Exception ex)
             {
-                //log.Error(ex.Message);
                 throw;
             }
         }
@@ -424,7 +423,6 @@ namespace Hexagon.Data.DataAccess
             }
             catch (Exception ex)
             {
-                //log.Error(ex.Message);
                 throw;
             }
         }
@@ -449,7 +447,6 @@ namespace Hexagon.Data.DataAccess
             }
             catch (Exception ex)
             {
-                //log.Error(ex.Message);
                 throw;
             }
         }
@@ -474,7 +471,6 @@ namespace Hexagon.Data.DataAccess
             }
             catch (Exception ex)
             {
-                //log.Error(ex.Message);
                 throw;
             }
         }

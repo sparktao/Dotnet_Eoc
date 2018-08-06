@@ -62,8 +62,10 @@ namespace Hexagon.IdentityServer
                         new Secret("dataEventRecordsSecret".Sha256())
                     },
 
-                    RedirectUris = { "http://localhost:5002/signin-oidc" },
-                    PostLogoutRedirectUris = { "http://localhost:5002/signout-callback-oidc" },
+                    RedirectUris = { string.Format("{0}/signin-oidc", configuration.GetValue<string>("AnotherWebMvc")) },
+                    PostLogoutRedirectUris = { string.Format("{0}/signout-callback-oidc", configuration.GetValue<string>("AnotherWebMvc")) },
+                    //OpenId, Profile 准许页面可以通过设置false去除
+                    RequireConsent = true,
 
                     AllowedScopes =
                     {

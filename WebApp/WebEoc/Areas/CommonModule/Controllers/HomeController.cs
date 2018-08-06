@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Hexagon.Entity;
 using Hexagon.IService;
@@ -27,10 +28,30 @@ namespace WebApplication1.Areas.CommonModule.Controllers
         public IActionResult Index()
         {
             ViewData["UserName"] = _configuration.GetSection("AppConfiguration")["CurrentUserName"];
-            List<Organization_Employee> emps = empbll.GetEmployeeList();
-            ViewData["employee_list"] = emps.Count;
+            Task<List<Organization_Employee>> t = empbll.GetEmployeeList();
+            t.Wait();
+            ViewData["employee_list"] = t.Result.Count;
 
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetItemById(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var item = await empbll.GetEmployeeById(id);
+            if (item != null)
+            {
+                return Ok(item);
+            }
+
+            return NotFound();
+        }
+
+
     }
 }

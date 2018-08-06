@@ -1,4 +1,7 @@
 ﻿
+using Hexagon.Data.Repository.IRepository;
+using Hexagon.Data.Repository.Repository;
+
 namespace Hexagon.Data.Repository
 {
     /// <summary>
@@ -20,6 +23,13 @@ namespace Hexagon.Data.Repository
         {
             return new Repository<T>(DbFactory.Base(connString, DatabaseType.Oracle));
         }
+
+        public IRepositoryAsyn<T> BaseRepositoryAsyn(string connString)
+        {
+            return new RepositoryAsyn<T>(DbFactory.BaseAsyn(connString, DatabaseType.Oracle));
+        }
+
+
         /// <summary>
         /// 定义仓储（基础库）
         /// </summary>

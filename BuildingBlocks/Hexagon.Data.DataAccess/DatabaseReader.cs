@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Hexagon.Data.DataAccess
 {
@@ -38,6 +40,30 @@ namespace Hexagon.Data.DataAccess
                 return objDataTable;
             }
         }
+
+        public static async Task<DataTable> ReaderToDataTableAsync(DbDataReader dr)
+        {
+            using (dr)
+            {
+                DataTable objDataTable = new DataTable("Table");
+                int intFieldCount = dr.FieldCount;
+                for (int intCounter = 0; intCounter < intFieldCount; ++intCounter)
+                {
+                    objDataTable.Columns.Add(dr.GetName(intCounter).ToLower(), dr.GetFieldType(intCounter));
+                }
+                objDataTable.BeginLoadData();
+                object[] objValues = new object[intFieldCount];
+                while (await dr.ReadAsync())
+                {
+                    dr.GetValues(objValues);
+                    objDataTable.LoadDataRow(objValues, true);
+                }
+                dr.Close();
+                objDataTable.EndLoadData();
+                return objDataTable;
+            }
+        }
+
         /// <summary>
         /// 将IDataReader转换为 集合
         /// </summary>
@@ -55,6 +81,42 @@ namespace Hexagon.Data.DataAccess
                 }
                 List<T> list = new List<T>();
                 while (dr.Read())
+                {
+                    T model = Activator.CreateInstance<T>();
+                    foreach (PropertyInfo property in model.GetType().GetProperties(BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance))
+                    {
+                        if (field.Contains(property.Name.ToLower()))
+                        {
+                            if (!IsNullOrDBNull(dr[property.Name]))
+                            {
+                                property.SetValue(model, HackType(dr[property.Name], property.PropertyType), null);
+                            }
+                        }
+                    }
+                    list.Add(model);
+                }
+                dr.Close();
+                return list;
+            }
+        }
+
+        /// <summary>
+        /// 异步将IDataReader转换为 集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dr"></param>
+        /// <returns></returns>
+        public static async Task<List<T>> ReaderToList<T>(DbDataReader dr)
+        {
+            using (dr)
+            {
+                List<string> field = new List<string>(dr.FieldCount);
+                for (int i = 0; i < dr.FieldCount; i++)
+                {
+                    field.Add(dr.GetName(i).ToLower());
+                }
+                List<T> list = new List<T>();
+                while (await dr.ReadAsync())
                 {
                     T model = Activator.CreateInstance<T>();
                     foreach (PropertyInfo property in model.GetType().GetProperties(BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance))
@@ -98,6 +160,27 @@ namespace Hexagon.Data.DataAccess
                 return model;
             }
         }
+
+        public static async Task<T> ReaderToModelAsync<T>(DbDataReader dr)
+        {
+            using (dr)
+            {
+                T model = Activator.CreateInstance<T>();
+                while (await dr.ReadAsync())
+                {
+                    foreach (PropertyInfo pi in model.GetType().GetProperties(BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance))
+                    {
+                        if (!IsNullOrDBNull(dr[pi.Name]))
+                        {
+                            pi.SetValue(model, HackType(dr[pi.Name], pi.PropertyType), null);
+                        }
+                    }
+                }
+                dr.Close();
+                return model;
+            }
+        }
+
         /// <summary>
         /// 将IDataReader转换为 哈希表
         /// </summary>
