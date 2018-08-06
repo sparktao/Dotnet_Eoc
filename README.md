@@ -1,3 +1,6 @@
+Dotnet Core Web application.
+
+
 Support oracle data access by referring Oracle.ManagedDataAccess.Core 2.12.0-beta2
 
 Using IdentityServer4 to support Single sign-on.
